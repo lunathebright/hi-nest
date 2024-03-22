@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { MoviesService } from './movies.service';
 import { Movie } from './entities/movie.entity';
@@ -21,10 +22,10 @@ export class MoviesController {
     return this.moviesService.getAll();
   }
 
-  // @Get('search')
-  // search(@Query('year') searchYear: string) {
-  //   return `search for a movie with ${searchYear}`;
-  // }
+  @Get('search')
+  search(@Query('year') searchYear: number) {
+    return this.moviesService.search(searchYear);
+  }
 
   @Get(':id')
   getOne(@Param('id') id: number): Movie {

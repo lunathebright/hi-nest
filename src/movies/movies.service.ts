@@ -11,6 +11,11 @@ export class MoviesService {
     return this.movies;
   }
 
+  search(year: number): Movie[] {
+    const movies = this.movies.filter((movie) => movie.year === year);
+    return movies;
+  }
+
   getOne(id: number): Movie {
     const movie = this.movies.find((movie) => movie.id === id);
     if (!movie) {
