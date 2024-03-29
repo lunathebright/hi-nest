@@ -1,44 +1,42 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Movie } from './entities/movie.entity';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class MoviesService {
-  private movies: Movie[] = [];
+  constructor(
+    @InjectRepository(Movie)
+    private moviesRepository: Repository<Movie>,
+  ) {}
 
-  getAll(): Movie[] {
-    return this.movies;
+  getAll(): Promise<Movie[]> {
+    return this.moviesRepository.find();
   }
 
-  search(year: number): Movie[] {
-    const movies = this.movies.filter((movie) => movie.year === year);
-    return movies;
-  }
-
-  getOne(id: number): Movie {
-    const movie = this.movies.find((movie) => movie.id === id);
-    if (!movie) {
-      throw new NotFoundException(`Movie with ID: ${id} not found.`);
-    }
-    return movie;
-  }
-
-  deleteOne(id: number) {
-    this.getOne(id);
-    this.movies = this.movies.filter((movie) => movie.id !== id);
-  }
-
-  create(movieData: CreateMovieDto) {
-    this.movies.push({
-      id: this.movies.length + 1,
-      ...movieData,
+  searchByGenre(genre: string): Promise<Movie[]> {
+    return this.moviesRepository.findBy({
+      genre: genre,
     });
   }
 
-  update(id: number, updateData: UpdateMovieDto) {
-    const movie = this.getOne(id);
+  getOne(id: number): Promise<Movie> {
+    return this.moviesRepository.findOneBy({ id: id });
+  }
+
+  async deleteOne(id: number) {
+    await this.moviesRepository.delete(id);
+  }
+
+  async create(movieData: CreateMovieDto) {
+    this.moviesRepository.save(movieData);
+  }
+
+  async update(id: number, updateData: UpdateMovieDto) {
+    const prev = this.getOne(id);
     this.deleteOne(id);
-    this.movies.push({ ...movie, ...updateData });
+    await this.moviesRepository.save({ ...prev, ...updateData });
   }
 }

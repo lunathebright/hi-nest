@@ -28,7 +28,7 @@ describe('MoviesService', () => {
     it('should return a movie', () => {
       service.create({
         title: 'test movie',
-        genres: ['test'],
+        genre: 'test',
         year: 2000,
       });
 
@@ -47,7 +47,7 @@ describe('MoviesService', () => {
     it('deletes a movie', () => {
       service.create({
         title: 'test movie',
-        genres: ['test'],
+        genre: 'test',
         year: 2000,
       });
       const beforeDeletes = service.getAll().length;
@@ -70,7 +70,7 @@ describe('MoviesService', () => {
       const beforeCreate = service.getAll().length;
       service.create({
         title: 'test movie',
-        genres: ['test'],
+        genre: 'test',
         year: 2000,
       });
       const afterCreate = service.getAll().length;
@@ -82,7 +82,7 @@ describe('MoviesService', () => {
     it('should update a movie', () => {
       service.create({
         title: 'test movie',
-        genres: ['test'],
+        genre: 'test',
         year: 2000,
       });
       service.update(1, { title: 'updated' });
